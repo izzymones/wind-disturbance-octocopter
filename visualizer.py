@@ -5,7 +5,11 @@ from constants import Constants
 
 
 class Visualizer:
-    def __init__(self, model):
+    def __init__(self, model, dataLog):
+
+        self.model = model
+        self.data = dataLog.data
+
         self.hub_b = np.zeros(3, dtype=float)
         self.arms_b = []
         self.rotors_b = []
@@ -26,8 +30,9 @@ class Visualizer:
         self.body_triad_scale = 0.18
         self.world_triad_scale = 0.25
         self.room_scale = 2
-        self.model = model
+
         self.set_up(self.model.mc.x0[0:3],self.model.mc.x0[6:10])
+
         
     def make_octa_geometry(self, L, Rr, n_circle, z_rotor):
         hub = np.array([0.0, 0.0, 0.0], dtype=float)
@@ -223,3 +228,9 @@ class Visualizer:
 
         self.fig.canvas.draw_idle()
         plt.pause(self.model.mc.dt)
+
+    def print_trajectory(self):
+        state_trajectory = self.data["state"]
+
+        for k in range(len(state_trajectory)):
+            self.update(state_trajectory[k][0:3], state_trajectory[k][6:10])

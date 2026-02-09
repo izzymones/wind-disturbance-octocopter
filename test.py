@@ -1,46 +1,54 @@
-from octa_model import OctaModel
-from constants import Constants
 import casadi as ca
 import numpy as np
+from constants import Constants
+from octa_model import OctaModel
+from emulator import PX4RateLoopEmulator
 from simulator import OctaSim
 from visualizer import Visualizer
 from plotter import Plotter
+from data import DataLog
+
+from nmpc import OctaNMPCdompc
 
 import matplotlib.pyplot as plt
 
 
 mc = Constants()
 model = OctaModel(mc)
+mpc = OctaNMPCdompc(mc.dt, model.model)
+emulator = PX4RateLoopEmulator(model)
+dataLog = DataLog()
 simulator = OctaSim(model)
-visualizer = Visualizer(model)
-plotter = Plotter(model)
+plotter = Plotter(model, dataLog)
+visualizer = Visualizer(model, dataLog)
 
-num_iterations = 200
 
-u0 = np.array(
-    [
-        [-mc.m * mc.gz],
-        [0.1],
-        [0.1],
-        [0.1],
-    ],
-    dtype=float,
-)
+x = ca.DM(mc.x0)
 
-plotter.allocate_data("state", num_iterations, 16)
-plotter.allocate_data("control", num_iterations, 4)
+mpc.setup_cost()
+mpc.set_start_state(x)
 
-for k in range(num_iterations):
-    x = simulator.step(u0)
 
-    plotter.add_point("state", k, x)
-    plotter.add_point("control", k, u0)
+dataLog.allocate_data("state", mc.num_iterations, 16)
+dataLog.allocate_data("control", mc.num_iterations, 4)
 
-    visualizer.update(x[0:3], x[6:10])
+for k in range(mc.num_iterations):
+    # y = randomizer(x)
+    # x = estimator(y)
+    u = mpc.mpc.make_step(x)
+    print(x,u)
 
-    print(x, k * mc.dt)
+    u_torque = emulator.step(u, x[10:13])
+    x = simulator.step(u)
 
+    dataLog.add_point("state", k, x)
+    dataLog.add_point("control", k, u)
+
+    # visualizer.update(x[0:3], x[6:10])
+
+visualizer.print_trajectory()
 plotter.plot_state("state")
+plotter.quadratic_plot_state("state")
 plotter.plot_control("control")
 
 plt.ioff()

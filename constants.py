@@ -4,6 +4,8 @@ import casadi as ca
 class Constants:
     def __init__(self):
 
+        # divide and rounds dt by simulation time to get number of iterations
+
         self.dt = 0.02
         self.sim_seconds = 10
         self.num_iterations = int(round(self.sim_seconds / self.dt))
@@ -23,20 +25,24 @@ class Constants:
         self.Iyy = 0.01
         self.Izz = 0.01
 
-
+        # inertia tensor
         self.I = np.array([
             [self.Ixx,0.0,0.0],
             [0.0,self.Iyy,0.0],
             [0.0,0.0,self.Izz]
         ])
 
+        # inertia diagonal
         self.I_diag = np.array([self.Ixx, self.Iyy, self.Izz])
         self.I_inv = np.linalg.inv(self.I)
 
-        self.dt = 0.02
-        # self.x0 = ca.vertcat(0.0,0.0,0.0, 0.0,0.0,0.0, 0.0,0.0,0.707,0.707, 0.0,0.0,0.0)
-        self.x0 = [1.0,2.0,3.0, 2.0,3.0,4.0, 0.308,-0.329,0.379,0.808, np.pi*50.0 / 180,np.pi*5.0 / 180,np.pi*5.0 / 180, 0.0,0.0,0.0]
-        self.xr = self.x0
+                # test initial state
+        # state: 3 pos, 3 vel, 4 quaternion, 3 angular velocity, 3 disturbance force vector (not yet in use)
+
+        # self.x0 = [4.0,5.0,0.0, 0.0,5.0,0.0, 0.0,0.0,0.0,1.0, np.pi*0.0 / 180,np.pi*0.0 / 180,np.pi*0.0 / 180, 0.0,0.0,0.0]
+        # self.x0 = [0.0,0.0,0.0, 0.0,0.0,0.0, 0.0,0.0,0.0,1.0, np.pi*45.0 / 180,np.pi*45.0 / 180,np.pi*.0 / 180, 0.0,0.0,0.0]
+        self.x0 = [0.0,0.0,0.0, 0.0,0.0,0.0, 0.230,0.159,0.186,0.942, np.pi*0.0 / 180,np.pi*0.0 / 180,np.pi*0.0 / 180, 0.0,0.0,0.0]
+        self.xr = [0.0,0.0,0.0, 0.0,0.0,0.0, 0.0,0.0,0.0,1.0, 0.0,0.0,0.0, 0.0,0.0,0.0]
 
         self.Q = ca.diag([20.0,20.0,20.0,10.0,10.0,10.0,500.0,500.0,500.0,0.0,15.0,15.0,10.0,0.25,0.25,0.25])
         self.R = ca.diag([1.0, 10.0, 10.0, 10.0])

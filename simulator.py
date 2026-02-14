@@ -1,11 +1,10 @@
 from do_mpc.simulator import Simulator
-from octa_model import OctaModel
-from constants import Constants
+from octo_model import OctoModel
 import casadi as ca
 
 
-class OctaSim():
-    def __init__(self, model: OctaModel):
+class OctoSim():
+    def __init__(self, model: OctoModel):
         self.model = model
         self.sim = Simulator(self.model.model)
         self.sim.x0 = ca.DM(model.mc.x0)

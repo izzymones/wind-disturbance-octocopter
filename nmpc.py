@@ -6,7 +6,7 @@ from constants import Constants
 
 mc = Constants()
 
-class OctaNMPCdompc:
+class OctoNMPCdompc:
     def __init__(self, dt, model):
         self.dt = dt
         self.model = model

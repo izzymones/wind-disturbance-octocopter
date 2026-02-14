@@ -1,24 +1,24 @@
 import casadi as ca
 import numpy as np
 from constants import Constants
-from octa_model import OctaModel
+from octo_model import OctoModel
 from emulator import PX4RateLoopEmulator
-from simulator import OctaSim
+from simulator import OctoSim
 from visualizer import Visualizer
 from plotter import Plotter
 from data import DataLog
 
-from nmpc import OctaNMPCdompc
+from nmpc import OctoNMPCdompc
 
 import matplotlib.pyplot as plt
 
 
 mc = Constants()
-model = OctaModel(mc)
-mpc = OctaNMPCdompc(mc.dt, model.model)
+model = OctoModel(mc)
+mpc = OctoNMPCdompc(mc.dt, model.model)
 emulator = PX4RateLoopEmulator(model)
 dataLog = DataLog()
-simulator = OctaSim(model)
+simulator = OctoSim(model)
 plotter = Plotter(model, dataLog)
 visualizer = Visualizer(model, dataLog)
 
@@ -47,8 +47,11 @@ for k in range(mc.num_iterations):
     # visualizer.update(x[0:3], x[6:10])
 
 visualizer.print_trajectory()
+visualizer.print_trajectory()
+visualizer.print_trajectory()
+
 plotter.plot_state("state")
-plotter.quadratic_plot_state("state")
+# plotter.quadratic_plot_state("state")
 plotter.plot_control("control")
 
 plt.ioff()

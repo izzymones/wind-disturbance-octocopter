@@ -1,8 +1,7 @@
 import casadi as ca
 import do_mpc
 
-
-class OctaModel:
+class OctoModel:
     def __init__(self, mc):
         self.mc = mc
 
@@ -18,17 +17,9 @@ class OctaModel:
 
         I_mat = ca.DM(mc.I)
 
-        T_vector = ca.vertcat(
-            0,
-            0,
-            u[0]
-        )
+        T_vector = ca.vertcat(0,0,u[0])
 
-        a_ext_vector = ca.vertcat(
-            0,
-            0,
-            0
-        )
+        a_ext_vector = ca.vertcat(0,0,0)
 
         M_vector = ca.vertcat(u[1],u[2],u[3])
         angular_momentum = I_mat @ w
